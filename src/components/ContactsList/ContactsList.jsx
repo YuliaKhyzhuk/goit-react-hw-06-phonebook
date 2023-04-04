@@ -1,5 +1,5 @@
 import React from 'react';
-// import PropTypes from 'prop-types';
+
 import {
   DeleteContactButton,
   ContactsContainer,
@@ -36,11 +36,5 @@ export const ContactsList = () => {
     </ContactsContainer>
   );
 };
-
-// ContactsList.propTypes = {
-//   contacts: PropTypes.arrayOf(PropTypes.shape({ contact: PropTypes.object }))
-//     .isRequired,
-//   onDeleteContact: PropTypes.func.isRequired,
-// };
 
 export default ContactsList;

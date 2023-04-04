@@ -7,9 +7,8 @@ import { ThemeProvider } from 'styled-components';
 
 import { Provider } from 'react-redux';
 import { persistor, store } from 'redux/store';
-// шлях норм 'redux/store' чи './redux/store'?
 import { PersistGate } from 'redux-persist/integration/react';
-// import { BrowserRouter } from 'react-router-dom';
+
 
 const theme = {
   colors: {

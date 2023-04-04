@@ -1,75 +1,86 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, { useState } from 'react';
+
 import { nanoid } from 'nanoid';
 import { FormInput, AddContactButton, FormContainer } from './Form.styled';
 
-class Form extends Component {
-  state = {
-    name: '',
-    number: '',
-  };
+import { useDispatch, useSelector } from 'react-redux';
+import { getContacts } from 'redux/selectors';
+import { addContact } from 'redux/contactsSlice';
 
-  nameInputId = nanoid();
-  numberInputId = nanoid();
+export const Form = () => {
+  const [name, setName] = useState('');
+  const [number, setNumber] = useState('');
 
-  handleInputChange = event => {
+  const dispatch = useDispatch();
+  const contacts = useSelector(getContacts);
+
+  const nameInputId = nanoid();
+  const numberInputId = nanoid();
+
+  const handleInputChange = event => {
     const { name, value } = event.currentTarget;
 
-    // console.log(event.currentTarget.value);
-    this.setState({ [name]: value });
+    switch (name) {
+      case 'name':
+        setName(value);
+        break;
+      case 'number':
+        setNumber(value);
+        break;
+      default:
+        return;
+    }
   };
 
-  handleSubmit = event => {
+  const handleSubmit = event => {
     event.preventDefault();
-    // console.log(this.state);
-    this.props.onSubmit(this.state);
-    this.reset();
+
+    const contactExists = contacts.find(contact => contact.name === name);
+
+    if (contactExists) return alert('The contact already exists!');
+
+    dispatch(addContact({ name, number }));
+
+    reset();
   };
 
-  reset = () => {
-    this.setState({ name: '', number: '' });
+  const reset = () => {
+    setName('');
+    setNumber('');
   };
 
-  render() {
-    return (
-     
-      <form onSubmit={this.handleSubmit}>
-         <FormContainer>
-        <label htmlFor={this.nameInputId}>
+  return (
+    <form onSubmit={handleSubmit}>
+      <FormContainer>
+        <label htmlFor={nameInputId}>
           <FormInput
             type="text"
             name="name"
             pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
             title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
-            value={this.state.name}
-            onChange={this.handleInputChange}
-            id={this.nameInputId}
+            value={name}
+            onChange={handleInputChange}
+            id={nameInputId}
             required
           />
         </label>
-        <label htmlFor={this.numberInputId}>
+        <label htmlFor={numberInputId}>
           <FormInput
             type="tel"
             name="number"
             pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
             title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
-            value={this.state.number}
-            onChange={this.handleInputChange}
-            id={this.numberInputId}
+            value={number}
+            onChange={handleInputChange}
+            id={numberInputId}
             required
           />
         </label>
-        </FormContainer>
+      </FormContainer>
 
-        <AddContactButton type="submit">Add contact</AddContactButton>
-      </form>
-  
-    );
-  }
-}
-
-Form.propTypes = {
-    onSubmit: PropTypes.func.isRequired,
-}
+      <AddContactButton type="submit">Add contact</AddContactButton>
+    </form>
+  );
+};
 
 export default Form;
